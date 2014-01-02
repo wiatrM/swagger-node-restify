@@ -393,6 +393,8 @@ function addMethod(app, handler) {
         } catch (error) {
           if (typeof errorHandler === "function") {
             errorHandler(req, res, error);
+          } else if (errorHandler === "next") {
+            next(error);
           } else {
             throw error;
           }
