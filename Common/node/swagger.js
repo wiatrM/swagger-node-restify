@@ -33,13 +33,10 @@ var allModels = {};
 // Default error handler
 var errorHandler = function (req, res, error) {
   if (error.code && error.message)
-    res.send(JSON.stringify(error), error.code);
+    res.send(error, error.code);
   else {
     console.error(req.method + " failed for path '" + require('url').parse(req.url).href + "': " + error);
-    res.send(JSON.stringify({
-      "message": "unknown error",
-      "code": 500
-    }), 500);
+    res.send({"message":'unknown error', "code":500}, 500);
   }
 };
 
@@ -107,7 +104,8 @@ function setResourceListingPaths(app) {
         if (data.code) {
           res.send(data, data.code);
         } else {
-          res.send(JSON.stringify(data));
+          //res.send(JSON.stringify(data));
+          res.send(data);
         }
       }
     });
@@ -383,10 +381,7 @@ function addMethod(app, handler) {
       // todo: needs to do smarter matching against the defined paths
       var path = req.url.split('?')[0].replace(jsonSuffix, "").replace(/{.*\}/, "*");
       if (!canAccessResource(req, path, req.method)) {
-        res.send(JSON.stringify({
-          "message": "forbidden",
-          "code": 403
-        }), 403);
+        res.send({"message":"forbidden", "code":403}, 403);
       } else {
         try {
           callback(req, res, next);
@@ -594,12 +589,9 @@ function error(code, description) {
 function stopWithError(res, error) {
   exports.setHeaders(res);
   if (error && error.message && error.code)
-    res.send(JSON.stringify(error), error.code);
+    res.send(error, error.code);
   else
-    res.send(JSON.stringify({
-      'message': 'internal error',
-      'code': 500
-    }), 500);
+    res.send({"message":'internal error', "code":500}, 500);
 }
 
 function setApiInfo(data) {
